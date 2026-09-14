@@ -1,0 +1,162 @@
+{
+  "id": "agentmeter-gov-guard",
+  "name": "AgentMeter-Gov Guard",
+  "description": "Full-chain AgentMeter-Gov guard for input, tools, output, memory, subagents and audit.",
+  "version": "2.0.0",
+  "activation": {
+    "onStartup": true
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "gateUrl": {
+        "type": "string",
+        "default": "http://127.0.0.1:8765/api/v1/evaluate"
+      },
+      "gateTimeoutMs": {
+        "type": "integer",
+        "minimum": 100,
+        "maximum": 60000,
+        "default": 10000,
+        "description": "Total gate request deadline including response decoding and optional backend recovery. Expiration follows failClosed; ambiguous failures are never automatically replayed."
+      },
+      "supplyChainScanUrl": {
+        "type": "string",
+        "default": "http://127.0.0.1:8765/api/supply-chain/scan"
+      },
+      "eventUrl": {
+        "type": "string",
+        "default": "http://127.0.0.1:8765/api/events"
+      },
+      "apiToken": {
+        "type": "string",
+        "description": "Bearer token for an authenticated AgentMeter-Gov API."
+      },
+      "runtimeDir": {
+        "type": "string",
+        "description": "AgentMeter-Gov runtime root. Relative record, approval and state paths are resolved from this directory. It can also be provided by AGENTMETER_GOV_HOME."
+      },
+      "autoStartBackend": {
+        "type": "boolean",
+        "default": true,
+        "description": "Start the local AgentMeter-Gov Python backend when the OpenClaw Gateway starts."
+      },
+      "backendRoot": {
+        "type": "string",
+        "description": "Optional backend runtime directory. Defaults to runtimeDir or AGENTMETER_GOV_HOME."
+      },
+      "backendPython": {
+        "type": "string",
+        "description": "Python executable used to start server.py. Defaults to AGENTMETER_PYTHON, python on Windows, or python3 elsewhere."
+      },
+      "backendExecutable": {
+        "type": "string",
+        "description": "Packaged AgentMeter-Gov backend executable. When set, it is started directly and Python is not required on the target computer."
+      },
+      "backendServerPath": {
+        "type": "string",
+        "default": "server.py",
+        "description": "Absolute path or backendRoot-relative path to the AgentMeter-Gov server entrypoint."
+      },
+      "backendHealthUrl": {
+        "type": "string",
+        "description": "Health endpoint used for reuse and readiness checks. Defaults to /health on gateUrl origin."
+      },
+      "backendStartupTimeoutMs": {
+        "type": "integer",
+        "minimum": 1000,
+        "maximum": 60000,
+        "default": 15000
+      },
+      "backendProbeTimeoutMs": {
+        "type": "integer",
+        "minimum": 100,
+        "maximum": 10000,
+        "default": 1000
+      },
+      "backendProbeIntervalMs": {
+        "type": "integer",
+        "minimum": 20,
+        "maximum": 5000,
+        "default": 250
+      },
+      "stopBackendOnGatewayExit": {
+        "type": "boolean",
+        "default": true,
+        "description": "Stop only the backend process launched by this Gateway when the Gateway exits."
+      },
+      "recordPath": {
+        "type": "string",
+        "default": "data/openclaw_guard_flow_events.jsonl"
+      },
+      "approvalPath": {
+        "type": "string",
+        "default": "data/openclaw_guard_approvals.json"
+      },
+      "reviewMemoryPath": {
+        "type": "string",
+        "default": "data/review_memory.json"
+      },
+      "batchStatePath": {
+        "type": "string",
+        "default": "data/openclaw_guard_batch_state.json"
+      },
+      "memoryGovernancePath": {
+        "type": "string",
+        "default": "data/memory_governance_state.json"
+      },
+      "memoryQuarantinePath": {
+        "type": "string",
+        "default": "data/memory_quarantine"
+      },
+      "maxLogBytes": {
+        "type": "integer",
+        "minimum": 1048576,
+        "default": 10485760
+      },
+      "logBackups": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 20,
+        "default": 5
+      },
+      "persistEvents": {
+        "type": "boolean",
+        "default": true
+      },
+      "failClosed": {
+        "type": "boolean",
+        "default": true
+      },
+      "outputMaxFileBytes": {
+        "type": "integer",
+        "minimum": 1024,
+        "maximum": 10485760,
+        "default": 1048576,
+        "description": "Maximum local text attachment size inspected by the output gate. Oversized files are blocked when failClosed is enabled."
+      },
+      "maxToolCallsPerTurn": {
+        "type": "integer",
+        "minimum": 4,
+        "maximum": 100,
+        "default": 16,
+        "description": "Stop excessive tool loops after this many calls in one turn."
+      },
+      "maxSearchCallsPerTurn": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 30,
+        "default": 6,
+        "description": "Maximum search/find/query calls in one turn."
+      },
+      "maxIdenticalToolCallsPerTurn": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 10,
+        "default": 3,
+        "description": "Maximum identical tool calls in one turn before stopping a retry loop."
+      }
+    }
+  }
+}

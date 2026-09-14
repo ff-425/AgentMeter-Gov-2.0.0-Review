@@ -1,0 +1,25 @@
+{
+  "demo_user_docs": {
+    "total_events": 30,
+    "intent_counts": {
+      "summarize": 20,
+      "local_write": 8,
+      "external_send": 2
+    },
+    "tool_counts": {
+      "read_file": 18,
+      "write_internal_file": 10,
+      "external_send": 2
+    },
+    "target_prefix_counts": {
+      "docs/": 18,
+      "reports/": 8,
+      "outbox/": 2
+    },
+    "external_send_count": 2,
+    "external_send_rate": 0.0667,
+    "avg_batch_size": 1.4,
+    "avg_risk_score": 18.5,
+    "last_updated": "2026-08-06T00:00:00+00:00"
+  }
+}

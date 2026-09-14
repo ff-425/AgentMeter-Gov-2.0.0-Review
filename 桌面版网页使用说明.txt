@@ -1,0 +1,16 @@
+AgentMeter-Gov 安全审计平台
+
+使用方法：
+1. 双击“打开安全审计平台.cmd”。
+2. 程序会自动启动本地审计服务并打开浏览器。
+3. 工作人员每向 OpenClaw 发送一次完整任务，网页就新增一项任务审计记录。
+
+真实网页文件位置：
+AgentMeter-Gov\frontend\security-layer.html
+AgentMeter-Gov\frontend\security-layer.css
+AgentMeter-Gov\frontend\security-layer.js
+
+说明：
+- 网页不使用固定演示数字，统计结果来自本机 OpenClaw 审计记录。
+- “审计规则”和“组件审计”尚未接入实时清单时，会明确显示“未接入”。
+- 运行过程中请保留整个项目文件夹结构，不要只复制 HTML 文件。

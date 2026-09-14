@@ -1,0 +1,101 @@
+{
+  "schema_version": "agentmeter.evaluation-summary.v1",
+  "title": "AgentMeter-Gov 综合真机测评指标",
+  "source_report": "AgentMeter-Gov_真机测试综合指标报告.docx",
+  "evaluation_scope": {
+    "start_date": "2026-08-10",
+    "end_date": "2026-09-06",
+    "plugin_version_range": "0.3.0-1.1.11",
+    "execution_mode": "OpenClaw 真机运行与真实工具调用",
+    "included_as": "2.0.0 公开仓库的综合测评基线",
+    "is_2_0_0_only_rerun": false
+  },
+  "scale": {
+    "unique_cases": 645,
+    "executions": 1073,
+    "gate_decisions_approx": 1581,
+    "attack_cases": 518,
+    "normal_cases": 127
+  },
+  "case_level_metrics": {
+    "comprehensive_defense": {
+      "successful_cases": 513,
+      "total_attack_cases": 518,
+      "rate_percent": 99.03
+    },
+    "agentmeter_intervention": {
+      "cases": 362,
+      "total_attack_cases": 518,
+      "rate_percent": 69.88
+    },
+    "model_self_refusal": {
+      "cases": 151,
+      "total_attack_cases": 518,
+      "rate_percent": 29.15
+    },
+    "harmful_bypass": {
+      "cases": 5,
+      "total_attack_cases": 518,
+      "rate_percent": 0.97
+    },
+    "normal_business_allow": {
+      "cases": 117,
+      "total_normal_cases": 127,
+      "rate_percent": 92.13
+    },
+    "normal_business_review": {
+      "cases": 5,
+      "total_normal_cases": 127,
+      "rate_percent": 3.94
+    },
+    "normal_business_hard_false_positive": {
+      "cases": 5,
+      "total_normal_cases": 127,
+      "rate_percent": 3.94
+    }
+  },
+  "event_level_metrics": {
+    "classified_gate_events": 954,
+    "supply_chain_scan_events_excluded_from_three_way_distribution": 27,
+    "attack": {
+      "events": 822,
+      "allow": 543,
+      "review": 83,
+      "block": 173,
+      "intervention_rate_percent": 31.14,
+      "allow_rate_percent": 66.06,
+      "block_rate_percent": 21.05
+    },
+    "normal": {
+      "events": 132,
+      "allow": 114,
+      "review": 9,
+      "block": 5,
+      "intervention_rate_percent": 10.61,
+      "allow_rate_percent": 86.36,
+      "block_rate_percent": 3.79
+    },
+    "combined": {
+      "events": 954,
+      "allow": 657,
+      "review": 92,
+      "block": 178,
+      "intervention_rate_percent": 28.30,
+      "allow_rate_percent": 68.87
+    }
+  },
+  "observations": {
+    "average_gate_events_per_case": 2.5,
+    "maximum_gate_events_in_one_case": 35,
+    "cases_without_gate_events": 74,
+    "reason_for_no_gate_event": "模型在调用工具前已拒绝",
+    "early_events_without_per_event_classification": 627
+  },
+  "interpretation_notes": [
+    "综合防护成功率由 AgentMeter 干预与模型自主拒绝共同构成。",
+    "5 个有害绕过均来自 V6 测试；主指标未排除其中 3 个存在会话解析失败、模型超时或测试夹具缺失的无效执行。",
+    "事件级 allow、review、block 数量之和与事件总数的差额来自单独统计的供应链扫描事件。",
+    "本文件只公开汇总指标，不包含原始案例、盲测集或会话内容。",
+    "这些指标覆盖多个插件版本，是随 2.0.0 公开仓库发布的综合测评基线，不表示只针对 2.0.0 进行的独立复测。"
+  ]
+}

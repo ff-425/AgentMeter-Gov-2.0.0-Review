@@ -1,0 +1,100 @@
+name: AgentMeter-Gov CI
+
+on:
+  push:
+    branches: [main, integration-core]
+  pull_request:
+
+jobs:
+  plugin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Plugin tests
+        run: npm --prefix agentmeter-gov-openclaw-plugin test
+      - name: Execution outcome regressions
+        run: npm --prefix agentmeter-gov-openclaw-plugin run test:execution
+      - name: Plugin-backend integration
+        env:
+          AGENTMETER_PYTHON: python
+        run: npm --prefix agentmeter-gov-openclaw-plugin run test:integration
+
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: agentmeter_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres-test-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d agentmeter_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      AGENTMETER_TEST_POSTGRES_URL: postgresql://postgres:postgres-test-password@127.0.0.1:5432/agentmeter_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Python compile and production controls
+        working-directory: AgentMeter-Gov
+        run: |
+          python -m pip install -r requirements-postgres.txt
+          python -m compileall -q agentmeter_gov server.py
+          python scripts/test_production_controls.py
+          python scripts/test_postgres_store.py
+          python scripts/test_server_controls.py
+          python scripts/test_evaluation_log_rotation.py
+          python scripts/test_evaluation_metrics.py
+          python scripts/test_live_evaluation_accounting.py
+
+  governance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Governance and network authorization regressions
+        working-directory: AgentMeter-Gov
+        run: |
+          python scripts/run_security_defense_tests.py
+          python scripts/run_gov_scenario_regression.py
+          python tests/test_network_commands.py
+          python scripts/test_scope_over_vocabulary.py
+          python scripts/test_holdout_regressions.py
+          python scripts/test_p0_trust_boundary_and_blast_radius.py
+          python scripts/test_shadowed_definitions.py
+
+  monitoring:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Monitoring and gate regressions
+        working-directory: AgentMeter-Gov
+        run: |
+          python -m unittest discover -s tests -p 'test_*monitor*.py'
+          python tests/test_risk_display_context.py
+          python tests/test_gate_performance.py
+          python tests/test_semantic_performance.py
+          node frontend/monitor-model.test.cjs
+          node frontend/monitor-transport.test.cjs
+          node frontend/task-risk.test.cjs

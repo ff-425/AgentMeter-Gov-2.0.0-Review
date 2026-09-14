@@ -1,0 +1,24 @@
+{
+  "name": "agentmeter-gov-openclaw-plugin",
+  "version": "2.0.0",
+  "type": "module",
+  "main": "./index.js",
+  "scripts": {
+    "demo:output": "node demo-output-redaction.mjs",
+    "test": "node test-gate-client.mjs && node test-backend-service.mjs && node test-input-gate.mjs && node test-input-layer-attacks.mjs && node test-input-false-positives.mjs && node test-input-routing.mjs && node test-exec-readonly.mjs && node test-runtime-risk.mjs && node test-governance.mjs && node test-output-governance.mjs && node test-output-hooks.mjs && node test-subagent-governance.mjs && node test-supply-chain-governance.mjs && node test-approval-ux.mjs && node test-approval-routing.mjs && node test-operation-boundary.mjs && node test-operation-budget.mjs",
+    "test:execution": "node --test test-execution-outcome.mjs",
+    "test:integration": "node test-runtime-backend-chain.mjs",
+    "test:chain": "npm run test:integration"
+  },
+  "openclaw": {
+    "extensions": [
+      "./index.js"
+    ],
+    "compat": {
+      "pluginApi": ">=2026.6.5",
+      "minGatewayVersion": "2026.6.5"
+    }
+  },
+  "private": true,
+  "license": "SEE LICENSE IN ../LICENSE"
+}

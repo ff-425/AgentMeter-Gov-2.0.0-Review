@@ -1,0 +1,42 @@
+services:
+  agentmeter:
+    build: .
+    ports:
+      - "8765:8765"
+    env_file:
+      - .env
+    environment:
+      AGENTMETER_DATABASE_URL: postgresql://agentmeter:${POSTGRES_PASSWORD}@postgres:5432/agentmeter
+    volumes:
+      - ./data:/app/data
+      - ./audit_reports:/app/audit_reports
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: agentmeter
+      POSTGRES_USER: agentmeter
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agentmeter"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+volumes:
+  postgres-data:

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="AgentMeter-Gov 智能体行为审计与风险计量平台">
+  <title>AgentMeter-Gov | 审计总览</title>
+  <link rel="icon" href="assets/cjlu-logo.jpg">
+  <link rel="stylesheet" href="security-layer.css">
+  <script defer src="assets/lucide.min.js"></script>
+  <script defer src="monitor-model.js"></script>
+  <script defer src="security-layer.js"></script>
+</head>
+<body>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="主导航">
+      <a class="brand" href="#overview"><span class="brand-mark"><i data-lucide="scale"></i></span><span class="brand-name"><strong>AgentMeter-Gov</strong><small>智能体行为审计与风险计量</small></span></a>
+      <div class="sidebar-label">审计工作台</div>
+      <nav class="side-nav">
+        <a class="nav-item" href="#overview" data-page="overview"><i data-lucide="layout-dashboard"></i><span>审计总览</span></a>
+        <a class="nav-item" href="#tasks" data-page="tasks"><i data-lucide="workflow"></i><span>审计任务</span><span class="nav-count" id="navTasks">0</span></a>
+        <a class="nav-item" href="#risks" data-page="risks"><i data-lucide="radar"></i><span>风险计量</span><span class="nav-count" id="navRisks">0</span></a>
+        <a class="nav-item" href="#reviews" data-page="reviews"><i data-lucide="clipboard-check"></i><span>复核与整改</span><span class="nav-count" id="navReviews">0</span></a>
+        <a class="nav-item" href="#evidence" data-page="evidence"><i data-lucide="archive"></i><span>审计档案</span></a>
+        <a class="nav-item" href="#rules" data-page="rules"><i data-lucide="book-open-check"></i><span>规则与标准</span></a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="preview-label"><span class="dot"></span>审计服务在线 <b>v2.0.0</b></div>
+        <div class="university"><img src="assets/cjlu-logo.jpg" alt="中国计量大学校徽"><div><strong>中国计量大学</strong><small>精思国计 · 细量民生</small></div><img class="team-pet" src="assets/desktop-pet-audit-fox-web.png" alt="团队桌宠"></div>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div class="breadcrumbs"><button class="icon-button mobile-menu" id="menuButton" title="打开导航" aria-label="打开导航" aria-expanded="false"><i data-lucide="menu"></i></button><span>智能体审计中心</span><span>/</span><strong id="breadcrumb">审计总览</strong></div>
+        <div class="topbar-actions"><span class="badge neutral" id="headerStatus"><span class="dot"></span>正在连接实时后端</span><button class="icon-button" id="settingsButton" title="数据连接" aria-label="数据连接"><i data-lucide="settings-2"></i></button></div>
+      </header>
+      <div class="content">
+        <div class="page-heading"><div><div class="eyebrow">中国计量大学 · AGENTMETER-GOV</div><h1 id="pageTitle">审计总览</h1><p id="pageSubtitle">以任务为审计对象，以证据链支撑每一项结论</p></div><div class="heading-actions"><label class="monitoring-scope">查看范围<select id="monitoringScope" aria-label="查看范围"><option value="current" selected>本次开机</option><option value="history">历史记录</option></select></label><button class="button" id="refreshButton"><i data-lucide="refresh-cw"></i><span>重新载入记录</span></button></div></div>
+        <div id="pageContent"></div>
+        <footer class="content-footer"><span>每项结论都可追溯到原始记录和处理规则。</span><span id="footerRange"></span></footer>
+      </div>
+    </main>
+  </div>
+  <dialog id="connectionDialog" class="drawer" aria-labelledby="connectionDialogTitle"><form id="connectionForm">
+    <div class="dialog-header"><div><span class="eyebrow">供技术人员使用</span><h2 id="connectionDialogTitle">数据连接设置</h2></div><button type="button" class="icon-button" data-close-dialog title="关闭" aria-label="关闭连接设置"><i data-lucide="x"></i></button></div>
+    <div class="dialog-body"><p>日常使用无需修改。只有在技术人员要求更换本机服务地址时，才需要设置。</p><div class="field"><label for="backendUrl">本机服务地址</label><input id="backendUrl" type="url" value="http://127.0.0.1:8765" required></div><div class="field"><label for="authToken">访问凭证（如有）</label><input id="authToken" type="password" autocomplete="off" placeholder="由技术人员提供"></div><div class="notice info">为保护数据，页面只能连接本机上的 AgentMeter-Gov 服务。</div><div class="field"><label><input type="checkbox" id="autoRefresh" checked> 自动更新数据</label></div><p class="muted" id="connectionFeedback">正在读取实时数据。</p></div>
+    <div class="dialog-footer"><button type="button" class="button" data-close-dialog>取消</button><button type="submit" class="button primary"><i data-lucide="plug"></i>连接并读取</button></div>
+  </form></dialog>
+  <dialog id="eventDialog" aria-labelledby="eventDialogTitle"><div class="dialog-header"><h2 id="eventDialogTitle">事件证据</h2><button class="icon-button" data-close-event title="关闭" aria-label="关闭事件详情"><i data-lucide="x"></i></button></div><div class="dialog-body" id="eventDialogBody"></div><div class="dialog-footer"><button class="button" data-close-event>关闭</button></div></dialog>
+  <div class="toast" id="toast" role="status" hidden></div>
+  <div id="printReport" class="print-only"></div>
+</body>
+</html>

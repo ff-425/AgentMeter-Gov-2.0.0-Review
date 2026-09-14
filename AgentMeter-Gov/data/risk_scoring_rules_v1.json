@@ -1,0 +1,124 @@
+{
+  "version": "2.1",
+  "name": "AgentMeter-Gov nine-factor explainable metering model",
+  "score_range": [0, 100],
+  "formula": "score = min(100, round(sum(F_i * W_i) + combo_bonus))",
+  "design_note": "面向政企场景的大模型智能体风险计量模型。九个因子共同计分，硬阻断规则优先于总分阈值，用户习性只用于加严或复核，不用于自动放松安全。",
+  "weights": {
+    "C": 0.1,
+    "G": 0.12,
+    "D": 0.18,
+    "P": 0.1,
+    "T": 0.13,
+    "S": 0.08,
+    "A": 0.09,
+    "I": 0.12,
+    "U": 0.08
+  },
+  "factors": {
+    "C": {
+      "name": "source_context_risk",
+      "zh_name": "来源与上下文风险",
+      "range": "0-100",
+      "definition": "输入来源、上下文、外部文档和隐藏指令的可信程度。",
+      "typical_scenarios": ["会议纪要隐藏指令", "低可信外部文档诱导越权", "外部网页要求忽略用户目标"]
+    },
+    "G": {
+      "name": "goal_shift_risk",
+      "zh_name": "目标偏移风险",
+      "range": "0-100",
+      "definition": "实际工具链是否偏离用户原始目标。",
+      "typical_scenarios": ["只要求总结却外发", "只读验收意见却修改结论", "只整理日志却删除日志"]
+    },
+    "D": {
+      "name": "data_risk",
+      "zh_name": "数据风险",
+      "range": "0-100",
+      "definition": "涉及数据的敏感程度和泄露影响。",
+      "typical_scenarios": ["人员名单", "通讯录", "身份证号", "手机号", "API key", ".env", ".npmrc"]
+    },
+    "P": {
+      "name": "permission_amplification_risk",
+      "zh_name": "权限放大风险",
+      "range": "0-100",
+      "definition": "工具调用是否扩大智能体权限边界。",
+      "typical_scenarios": ["命令执行", "数据库查询", "批量外发", "审批提交", "批量删除"]
+    },
+    "T": {
+      "name": "tool_chain_risk",
+      "zh_name": "工具链组合风险",
+      "range": "0-100",
+      "definition": "多步工具调用是否形成危险链路。",
+      "typical_scenarios": ["读取敏感文件后邮件外发", "查询数据库后上传外部 URL", "凭证读取后执行命令"]
+    },
+    "S": {
+      "name": "supply_chain_state_risk",
+      "zh_name": "插件/Skill 供应链状态风险",
+      "range": "0-100",
+      "definition": "插件、Skill 或外部组件是否存在版本漂移、声明能力不一致或新增高危能力。",
+      "typical_scenarios": ["插件版本漂移", "Skill 新增外联能力", "声明摘要插件实际读取凭证"]
+    },
+    "A": {
+      "name": "audit_behavior_risk",
+      "zh_name": "审计与行为异常风险",
+      "range": "0-100",
+      "definition": "执行过程是否破坏审计证据、隐藏副作用或缺少关键证据。",
+      "typical_scenarios": ["删除 audit.log", "覆盖操作日志", "外发副作用未披露"]
+    },
+    "I": {
+      "name": "intent_drift_risk",
+      "zh_name": "意图偏移风险",
+      "range": "0-100",
+      "definition": "用户原始目标与 OpenClaw 实际工具动作之间的一致性。",
+      "typical_scenarios": ["总结任务变外发", "只读任务变审批", "内部整理变系统命令"]
+    },
+    "U": {
+      "name": "user_behavior_anomaly_risk",
+      "zh_name": "用户习性偏移风险",
+      "range": "0-100",
+      "definition": "当前行为与用户历史工具、目标、外发比例和批量规模是否明显不同。",
+      "typical_scenarios": ["本地摘要用户突然读取密钥", "无外发用户突然批量群发", "普通办公用户突然执行危险命令"]
+    }
+  },
+  "action_thresholds": [
+    {
+      "min": 0,
+      "max": 39,
+      "level": "low",
+      "zh_level": "低风险",
+      "action": "allow",
+      "explanation": "未命中关键政企风险链路，风险贡献主要来自低影响读写或公开数据，可放行并保留基础审计。"
+    },
+    {
+      "min": 40,
+      "max": 74,
+      "level": "review",
+      "zh_level": "需复核风险",
+      "action": "human_review",
+      "explanation": "出现外发、批量、正式文件写入、敏感中转或意图偏移等关键因子，但未达到硬阻断条件，需要负责人确认。"
+    },
+    {
+      "min": 75,
+      "max": 100,
+      "level": "block",
+      "zh_level": "高风险",
+      "action": "block",
+      "explanation": "命中敏感数据外发、凭证读取、审计破坏、危险命令、未授权审批/篡改等高危链路，应在工具执行前阻断。"
+    }
+  ],
+  "hard_block_principles": [
+    "敏感数据外发到外部域名或外部邮箱",
+    "读取 token、API key、.env、.npmrc、SSH key 等凭证类资产",
+    "删除、清空、覆盖或隐藏审计日志",
+    "未授权修改公文、合同、验收、审批结论",
+    "执行远程脚本、编码命令、批量破坏性命令",
+    "低可信输入诱导敏感读取或外发"
+  ],
+  "review_principles": [
+    "授权外发但涉及组织外部目标",
+    "批量通知、批量写入、批量删除等高影响动作",
+    "内部或敏感数据写入 outbox/export/upload/tmp 等中转区",
+    "插件或 Skill 版本漂移、新增能力或能力声明不一致",
+    "目标-行为存在明显偏移但尚未触发硬阻断"
+  ]
+}
